@@ -32,101 +32,112 @@ body{
   font-family:'Inter',sans-serif;
   padding:clamp(16px,4vw,28px) clamp(12px,4vw,18px) 60px;
 }
+.bg-fx{display:none;}
 .wrap{max-width:920px;margin:0 auto;}
 
-/* ---- Hero cue clock ---- */
-.cue-hero{
+.glass{
   background:var(--panel);
   border:1px solid var(--line);
   border-radius:10px;
-  padding:clamp(16px,4vw,22px) clamp(16px,4vw,24px);
-  margin-bottom:22px;
-  position:relative;
-  overflow:hidden;
 }
-.cue-hero::before{
-  content:"";
-  position:absolute; left:0; top:0; bottom:0; width:4px;
-  background:var(--signal);
+
+/* ---- Top banner ---- */
+.top-banner{
+  position:fixed; top:0; left:0; right:0; z-index:100;
+  background:var(--signal); color:#14171C;
+  padding:14px 20px; display:flex; justify-content:space-between; align-items:center; gap:14px;
+  transform:translateY(-100%); transition:transform .3s ease;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+  font-family:'Oswald',sans-serif;
 }
-.cue-top{display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:8px 14px;}
-.cue-label{
+.top-banner.show{transform:translateY(0);}
+.top-banner.ringing{animation:ring-shake 0.5s ease-in-out infinite;}
+@keyframes ring-shake{0%,100%{transform:translateY(0) rotate(0);}25%{transform:translateY(0) rotate(-0.6deg);}75%{transform:translateY(0) rotate(0.6deg);}}
+.tb-text{font-weight:600; font-size:14px; letter-spacing:.01em; line-height:1.4;}
+.tb-close{
+  background:rgba(20,23,28,.2); border:1px solid rgba(20,23,28,.3); color:#14171C;
+  padding:8px 16px; border-radius:6px;
+  font-size:11px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  cursor:pointer; flex:0 0 auto; line-height:1; font-family:'Oswald',sans-serif;
+}
+
+/* ---- Hero ---- */
+.hero{padding:clamp(16px,4vw,22px) clamp(16px,4vw,24px); margin-bottom:22px; position:relative; overflow:hidden;}
+.hero::before{content:""; position:absolute; left:0; top:0; bottom:0; width:4px; background:var(--signal);}
+.live-pill{
+  display:flex; align-items:center; gap:7px;
   font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:.14em;
-  font-size:11px; color:var(--muted); text-transform:uppercase;
+  font-size:11px; color:var(--muted); text-transform:uppercase; margin-bottom:6px;
 }
-.cue-clock{
-  font-family:'JetBrains Mono',monospace; font-size:clamp(24px,7vw,34px); font-weight:700; letter-spacing:.02em;
-  line-height:1.2;
-}
-.cue-date{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
-.next-line{
-  margin-top:14px; padding-top:14px; border-top:1px solid var(--line);
-  display:flex; align-items:flex-start; gap:10px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.5;
-}
-.dot{width:9px;height:9px;border-radius:50%;background:var(--signal); flex:0 0 auto; margin-top:5px;
+.live-dot{width:9px;height:9px;border-radius:50%; background:var(--signal); flex:0 0 auto;
   animation:pulse 1.6s ease-in-out infinite;}
-@keyframes pulse{0%,100%{opacity:1;box-shadow:0 0 0 0 rgba(255,107,53,.5);}50%{opacity:.55;box-shadow:0 0 0 6px rgba(255,107,53,0);}}
-.next-txt b{color:var(--text); font-weight:700;}
-.next-txt{color:var(--muted);}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.45;}}
+.hero-clock{
+  font-family:'JetBrains Mono',monospace; font-size:clamp(24px,7vw,34px); font-weight:700; letter-spacing:.02em;
+  color:var(--text); line-height:1.2;
+}
+.hero-date{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); margin-top:4px;}
+.next-up{
+  margin-top:14px; padding-top:14px; border-top:1px solid var(--line);
+  font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.5; color:var(--muted); display:flex; gap:10px; align-items:flex-start;
+}
+.next-up b{color:var(--text); font-weight:700;}
+.next-icon{flex:0 0 auto; font-size:13px; margin-top:1px; opacity:.7;}
 
 /* ---- Weekly progress ---- */
-.week-progress{
-  background:var(--panel); border:1px solid var(--line); border-radius:10px;
-  padding:18px 20px; margin-bottom:26px;
-}
-.wp-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:8px;}
-.wp-label{font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:.1em; font-size:12px; color:var(--muted); text-transform:uppercase;}
-.wp-count{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text);}
-.wp-track{height:10px; background:var(--panel2); border:1px solid var(--line); border-radius:20px; overflow:hidden;}
-.wp-fill{height:100%; background:linear-gradient(90deg,var(--signal),var(--go)); width:0%; transition:width .35s ease; border-radius:20px;}
-.wp-pct{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); margin-top:8px; text-align:right;}
+.progress-card{padding:18px 20px; margin-bottom:22px;}
+.progress-top{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:10px; flex-wrap:wrap; gap:8px;}
+.progress-label{font-family:'Oswald',sans-serif; font-weight:600; letter-spacing:.1em; font-size:12px; color:var(--muted); text-transform:uppercase;}
+.progress-value{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text);}
+.progress-track{height:10px; background:var(--panel2); border:1px solid var(--line); border-radius:20px; overflow:hidden;}
+.progress-fill{height:100%; background:var(--signal); width:0%; transition:width .35s ease; border-radius:20px;}
+.progress-pct{font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted); margin-top:8px; text-align:right;}
 
-/* ---- Platform sections ---- */
-.platform{margin-bottom:30px;}
-.platform-head{
-  display:flex; align-items:center; gap:9px; margin-bottom:12px;
-}
-.ident{width:10px; height:10px; border-radius:3px; flex:0 0 auto;}
-.ident-yt{background:var(--yt-accent);}
-.ident-ig{background:var(--ig-accent);}
-.ident-fb{background:var(--fb-accent);}
+/* ---- Platform blocks ---- */
+.platform-block{margin-bottom:26px;}
+.platform-head{display:flex; align-items:center; gap:9px; margin-bottom:12px;}
+.plat-ident{width:10px; height:10px; border-radius:3px; flex:0 0 auto;}
+.plat-ident.yt{background:var(--yt-accent);}
+.plat-ident.ig{background:var(--ig-accent);}
+.plat-ident.fb{background:var(--fb-accent);}
 .platform-head h2{
   font-family:'Oswald',sans-serif; font-size:clamp(17px,4vw,20px); font-weight:700; letter-spacing:.04em;
   text-transform:uppercase; margin:0;
 }
-.platform-head span{
+.platform-head .count{
   font-family:'JetBrains Mono',monospace; font-size:11px; color:var(--muted);
-  border:1px solid var(--line); padding:2px 8px; border-radius:20px;
+  border:1px solid var(--line); padding:2px 8px; border-radius:20px; margin-left:auto;
 }
 
-.row{
-  background:var(--panel); border:1px solid var(--line); border-radius:8px;
-  padding:14px 16px; margin-bottom:10px;
+/* ---- Channel card ---- */
+.card{
+  padding:14px 16px; margin-bottom:10px; position:relative;
   transition:border-color .15s ease, transform .15s ease;
 }
 @media (hover:hover){
-  .row:hover{border-color:#3A414D; transform:translateY(-1px);}
+  .card:hover{border-color:#3A414D; transform:translateY(-1px);}
 }
-.row-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;}
+.card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;}
 .ch-name{font-family:'Oswald',sans-serif; font-weight:600; font-size:16px; letter-spacing:.02em;}
 .ch-meta{font-size:12px; color:var(--muted); margin-top:2px;}
-.status-badge{
-  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.06em;
-  padding:4px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap;
-}
-.status-off{color:var(--muted); border:1px solid var(--line);}
-.status-upcoming{color:var(--warn); border:1px solid var(--warn);}
-.status-due{color:var(--signal); border:1px solid var(--signal); animation:pulse 1.6s ease-in-out infinite;}
-.status-done{color:var(--go); border:1px solid var(--go);}
 
-.row-bottom{display:flex; justify-content:space-between; align-items:center; margin-top:12px; gap:12px; flex-wrap:wrap;}
+.badge{
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700; letter-spacing:.06em;
+  padding:4px 10px; border-radius:20px; text-transform:uppercase; white-space:nowrap; border:1px solid transparent;
+}
+.badge-off{color:var(--muted); border-color:var(--line);}
+.badge-upcoming{color:var(--warn); border-color:var(--warn);}
+.badge-due{color:var(--signal); border-color:var(--signal); animation:pulse 1.6s ease-in-out infinite;}
+.badge-done{color:var(--go); border-color:var(--go);}
+
+.card-bottom{display:flex; justify-content:space-between; align-items:center; margin-top:12px; gap:12px; flex-wrap:wrap;}
 .days{display:flex; gap:5px;}
-.day-chip{
+.day-pill{
   width:24px; height:24px; border-radius:5px; display:flex; align-items:center; justify-content:center;
   font-family:'JetBrains Mono',monospace; font-size:10px; font-weight:700; color:var(--off); border:1px solid var(--line);
 }
-.day-chip.active{color:var(--bg); background:var(--signal); border-color:var(--signal);}
-.day-chip.done-active{color:var(--bg); background:var(--go); border-color:var(--go);}
+.day-pill.active{color:var(--bg); background:var(--signal); border-color:var(--signal);}
+.day-pill.done-active{color:var(--bg); background:var(--go); border-color:var(--go);}
 
 .time-tag{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text); white-space:nowrap;}
 
@@ -135,14 +146,14 @@ body{
   font-family:'Inter',sans-serif; font-size:12px; color:var(--muted);
 }
 .check input{width:18px;height:18px;accent-color:var(--go); cursor:pointer;}
+
 .extra-tag{
   margin-top:8px; font-size:11px; color:var(--muted); border-top:1px dashed var(--line); padding-top:8px;
 }
+.extra-row{display:flex; justify-content:space-between; align-items:center; margin-top:10px; gap:10px; flex-wrap:wrap;}
 
 /* ---- Settings ---- */
-.settings{
-  background:var(--panel2); border:1px solid var(--line); border-radius:10px; padding:20px;
-}
+.settings{padding:20px; margin-top:0;}
 .settings h3{
   font-family:'Oswald',sans-serif; text-transform:uppercase; letter-spacing:.08em; font-size:14px; margin:0 0 14px;
   color:var(--muted);
@@ -151,10 +162,13 @@ body{
 .set-row:last-child{border-bottom:none;}
 .set-label{font-size:13px;}
 .set-sub{font-size:11px; color:var(--muted); margin-top:2px;}
-select,input[type=time]{
+select,input[type=time],input[type=number]{
   background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:6px; padding:7px 10px;
   font-family:'JetBrains Mono',monospace; font-size:12px;
 }
+.time12{display:flex; gap:5px; align-items:center;}
+.time12 select{padding:7px 8px;}
+#morningAmpm, #nightAmpm{font-weight:700;}
 .toggle{
   width:42px; height:24px; border-radius:20px; background:var(--off); position:relative; cursor:pointer; border:none; flex:0 0 auto;
 }
@@ -176,6 +190,7 @@ select,input[type=time]{
   border-top:1px solid var(--line); padding-top:14px;
 }
 
+/* ---- Toast ---- */
 .toast{
   position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px);
   background:var(--signal); color:#14171C; padding:12px 20px; border-radius:8px;
@@ -185,42 +200,16 @@ select,input[type=time]{
 }
 .toast.show{opacity:1; transform:translateX(-50%) translateY(0);}
 
-.top-banner{
-  position:fixed; top:0; left:0; right:0; z-index:100;
-  background:var(--signal); color:#14171C;
-  padding:14px 20px; display:flex; justify-content:space-between; align-items:center; gap:14px;
-  transform:translateY(-100%); transition:transform .3s ease;
-  box-shadow:0 6px 20px rgba(0,0,0,.35);
-  font-family:'Oswald',sans-serif;
-}
-.top-banner.show{transform:translateY(0);}
-.tb-text{font-weight:600; font-size:14px; letter-spacing:.01em; line-height:1.4;}
-.tb-close{
-  background:rgba(20,23,28,.15); border:none; color:#14171C; width:26px; height:26px; border-radius:6px;
-  font-size:16px; font-weight:700; cursor:pointer; flex:0 0 auto; line-height:1;
-}
-
 /* ---- Mobile ---- */
 @media (max-width:560px){
-  .cue-top{flex-direction:column; align-items:flex-start; gap:6px;}
-  .cue-date{font-size:11px;}
-  .next-line{font-size:12px;}
-
-  .row-top{flex-direction:column; align-items:flex-start; gap:8px;}
-  .status-badge{align-self:flex-start;}
-
-  .row-bottom{flex-direction:column; align-items:flex-start; gap:10px;}
-  .days{order:1;}
-  .time-tag{order:2;}
-  .check{order:3;}
-
+  .card-top{flex-direction:column; align-items:flex-start; gap:8px;}
+  .card-bottom{flex-direction:column; align-items:flex-start; gap:10px;}
   .set-row{flex-direction:column; align-items:flex-start; gap:10px;}
   .set-row > div:last-child{width:100%;}
-  .set-row > div:last-child > select{flex:1;}
   select, input[type=time]{flex:1; min-width:0;}
+  .time12{width:100%;}
+  .time12 select{flex:1; min-width:0;}
   .btn.ghost{flex:0 0 auto;}
-
-  .wp-top{flex-direction:column; align-items:flex-start; gap:4px;}
   .toast{font-size:12px; padding:10px 16px; bottom:14px;}
   .top-banner{padding:12px 14px;}
   .tb-text{font-size:12.5px;}
@@ -228,40 +217,43 @@ select,input[type=time]{
 </style>
 </head>
 <body>
+<div class="bg-fx"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+
 <div class="top-banner" id="topBanner">
   <div class="tb-text" id="topBannerText"></div>
-  <button class="tb-close" id="topBannerClose">✕</button>
+  <button class="tb-close" id="topBannerClose">STOP</button>
 </div>
+
+<div id="previewNotice" style="display:none; max-width:880px; margin:0 auto 16px; position:relative; z-index:1;">
+  <div class="glass" style="padding:12px 16px; font-size:12px; color:var(--warn); border-color:var(--warn); display:flex; justify-content:space-between; align-items:center; gap:12px;">
+    <span>⚠️ Preview mode detected — saved ticks/settings won't survive a reload here. Deploy this file to its own URL (e.g. GitHub Pages) and they'll persist normally.</span>
+    <button id="dismissPreviewNotice" style="background:none;border:1px solid var(--warn);color:var(--warn);border-radius:6px;padding:4px 10px;cursor:pointer;font-size:11px;flex:0 0 auto;">Got it</button>
+  </div>
+</div>
+
 <div class="wrap">
 
-  <div class="cue-hero">
-    <div class="cue-top">
-      <div>
-        <div class="cue-label">On Air Clock</div>
-        <div class="cue-clock" id="clock">--:--:--</div>
-      </div>
-      <div class="cue-date" id="dateStr">—</div>
-    </div>
-    <div class="next-line">
-      <div class="dot"></div>
-      <div class="next-txt" id="nextUp">Loading schedule…</div>
-    </div>
+  <div class="hero glass">
+    <div class="live-pill"><span class="live-dot"></span>On Air</div>
+    <div class="hero-clock" id="clock">--:--:--</div>
+    <div class="hero-date" id="dateStr">—</div>
+    <div class="next-up"><span class="next-icon">📡</span><span id="nextUp">Loading schedule…</span></div>
   </div>
 
-  <div class="week-progress">
-    <div class="wp-top">
-      <div class="wp-label">This Week's Progress</div>
-      <div class="wp-count" id="wpCount">0 / 0 posted</div>
+  <div class="progress-card glass">
+    <div class="progress-top">
+      <div class="progress-label">This Week's Progress</div>
+      <div class="progress-value" id="wpCount">0 / 0 posted</div>
     </div>
-    <div class="wp-track"><div class="wp-fill" id="wpFill"></div></div>
-    <div class="wp-pct" id="wpPct">0%</div>
+    <div class="progress-track"><div class="progress-fill" id="wpFill"></div></div>
+    <div class="progress-pct" id="wpPct">0%</div>
   </div>
 
-  <div class="platform" id="youtube-section"></div>
-  <div class="platform" id="instagram-section"></div>
-  <div class="platform" id="facebook-section"></div>
+  <div class="platform-block" id="youtube-section"></div>
+  <div class="platform-block" id="instagram-section"></div>
+  <div class="platform-block" id="facebook-section"></div>
 
-  <div class="settings">
+  <div class="settings glass">
     <h3>Reminders &amp; Alarm</h3>
 
     <div class="set-row">
@@ -278,7 +270,11 @@ select,input[type=time]{
         <div class="set-sub">Notification listing everything due today</div>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
-        <input type="time" id="morningTime" value="08:00">
+        <div class="time12">
+          <select id="morningHour"></select>
+          <select id="morningMin"></select>
+          <select id="morningAmpm"><option>AM</option><option>PM</option></select>
+        </div>
         <button class="toggle" id="toggleMorning"></button>
       </div>
     </div>
@@ -312,13 +308,17 @@ select,input[type=time]{
         <div class="set-sub">"Build something today" nudge</div>
       </div>
       <div style="display:flex; gap:8px; align-items:center;">
-        <input type="time" id="nightTime" value="22:00">
+        <div class="time12">
+          <select id="nightHour"></select>
+          <select id="nightMin"></select>
+          <select id="nightAmpm"><option>AM</option><option>PM</option></select>
+        </div>
         <button class="toggle" id="toggleNight"></button>
       </div>
     </div>
 
     <div class="note">
-      "Screen notifications" use your browser's real notification system — once enabled, the morning briefing and posting alerts pop up as OS-level banners, not just inside the tab. This works well on desktop Chrome/Edge/Firefox and on Android Chrome. iPhone Safari only supports this if you add this page to your Home Screen as an app (Share → Add to Home Screen) — a regular Safari tab can't show them due to Apple's restrictions. Either way, this tab needs to still be open (it can be in the background) for the timer to fire — fully closing the browser stops it. For reminders that work even fully closed, use your phone's built-in Alarm app for the 10pm nudge, and Google Calendar recurring events for exact posting slots — ask me and I'll generate an importable calendar file too.
+      "Screen notifications" use your browser's real notification system — once enabled, alerts pop up as OS-level banners, not just inside the tab. Works on desktop Chrome/Edge/Firefox and Android Chrome. iPhone Safari only supports this if you add this page to your Home Screen (Share → Add to Home Screen). Either way, this tab needs to stay loaded (background is fine) — fully closing the browser stops it. For reminders that work even fully closed, use your phone's built-in Alarm app for the 10pm nudge, and ask me to generate a Google Calendar file for exact posting slots.
     </div>
   </div>
 
@@ -330,21 +330,22 @@ select,input[type=time]{
 // ---------------- Data ----------------
 // day index: 0=Sun 1=Mon 2=Tue 3=Wed 4=Thu 5=Fri 6=Sat
 const CHANNELS = [
-  {id:'yt-jesus', platform:'YouTube', name:'Jesus', meta:'4.2k subscribers · Daily 2 Shorts', days:[0,1,2,3,4,5,6], time:'12:00',
+  {id:'yt-jesus', platform:'YouTube', name:'Jesus', meta:'4.2k subscribers · Daily 2 Shorts', days:[0,1,2,3,4,5,6], time:'16:30',
     extraNote:'Also cross-posted to Facebook · 3.4k followers'},
   {id:'yt-rahul', platform:'YouTube', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30'},
   {id:'yt-raccoon', platform:'YouTube', name:'AI With Raccoon', meta:'Weekly · 3 Videos', days:[1,6], time:'18:30'},
-  {id:'ig-nxt', platform:'Instagram', name:'Nxtfigurelab', meta:'Daily · 1 Reel', days:[0,1,2,3,4,5,6], time:'12:00'},
+  {id:'ig-nxt', platform:'Instagram', name:'Nxtfigurelab', meta:'Daily · 1 Reel', days:[0,1,2,3,4,5,6], time:'22:30'},
   {id:'ig-rahul', platform:'Instagram', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30'},
   {id:'ig-raccoon', platform:'Instagram', name:'AI With Raccoon', meta:'Weekly · 3 Reels', days:[1,6], time:'18:30',
     extra:{days:[3], label:'Carousel post (Wed)'}},
-  {id:'fb-jesus', platform:'Facebook', name:'Jesus', meta:'3.5k followers · Daily 2 Shorts', days:[0,1,2,3,4,5,6], time:'12:00'},
-  {id:'fb-nxt', platform:'Facebook', name:'Nxtfigurelab', meta:'Daily · 1 Reel', days:[0,1,2,3,4,5,6], time:'12:00'},
+  {id:'fb-jesus', platform:'Facebook', name:'Jesus', meta:'3.5k followers · Daily 2 Shorts', days:[0,1,2,3,4,5,6], time:'16:30'},
+  {id:'fb-nxt', platform:'Facebook', name:'Nxtfigurelab', meta:'Daily · 1 Reel', days:[0,1,2,3,4,5,6], time:'22:30'},
   {id:'fb-rahul', platform:'Facebook', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30'},
   {id:'fb-raccoon', platform:'Facebook', name:'AI With Raccoon', meta:'Weekly · 3 Reels', days:[1,6], time:'18:30',
     extra:{days:[3], label:'Carousel post (Wed)'}},
 ];
 
+const PLAT_ACCENT = {YouTube:'var(--yt)', Instagram:'var(--ig2)', Facebook:'var(--fb)'};
 const DAY_LABELS = ['M','T','W','T','F','S','S']; // Mon..Sun display order
 const DAY_ORDER = [1,2,3,4,5,6,0]; // maps display index -> JS day index
 const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
@@ -352,46 +353,35 @@ const DAY_NAMES = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
 let postedLog = {};     // { "yt-jesus:2026-08-16": true }
 let alertedLog = {};    // same shape, prevents re-firing same slot same day
 let settings = {alertsOn:true, sound:'chime', nightOn:true, nightTime:'22:00', nightAlertedDate:null, morningOn:true, morningTime:'08:00', morningAlertedDate:null};
-let followers = {'yt-jesus':4200,'yt-rahul':0,'yt-raccoon':0,'ig-nxt':0,'ig-rahul':0,'ig-raccoon':0,'fb-nxt':0,'fb-rahul':0,'fb-raccoon':0};
-let goals = {'yt-jesus':100000,'yt-rahul':100000,'yt-raccoon':100000,'ig-nxt':100000,'ig-rahul':100000,'ig-raccoon':100000,'fb-nxt':100000,'fb-rahul':100000,'fb-raccoon':100000};
+let followers = {'yt-jesus':4200,'yt-rahul':0,'yt-raccoon':0,'ig-nxt':0,'ig-rahul':0,'ig-raccoon':0,'fb-jesus':3500,'fb-nxt':0,'fb-rahul':0,'fb-raccoon':0};
+let goals = {'yt-jesus':100000,'yt-rahul':100000,'yt-raccoon':100000,'ig-nxt':100000,'ig-rahul':100000,'ig-raccoon':100000,'fb-jesus':100000,'fb-nxt':100000,'fb-rahul':100000,'fb-raccoon':100000};
 
-// ---------------- Storage ----------------
+// ---------------- Storage (localStorage — works on any hosted site, incl. GitHub Pages) ----------------
 async function loadState(){
-  try{
-    const p = await window.storage.get('cue-posted-log');
-    postedLog = p ? JSON.parse(p.value) : {};
-  }catch(e){ postedLog = {}; }
-  try{
-    const a = await window.storage.get('cue-alerted-log');
-    alertedLog = a ? JSON.parse(a.value) : {};
-  }catch(e){ alertedLog = {}; }
-  try{
-    const s = await window.storage.get('cue-settings');
-    if(s) settings = {...settings, ...JSON.parse(s.value)};
-  }catch(e){ /* defaults stand */ }
-  try{
-    const f = await window.storage.get('cue-followers');
-    if(f) followers = {...followers, ...JSON.parse(f.value)};
-  }catch(e){ /* defaults stand */ }
-  try{
-    const g = await window.storage.get('cue-goals');
-    if(g) goals = {...goals, ...JSON.parse(g.value)};
-  }catch(e){ /* defaults stand */ }
+  try{ const p = localStorage.getItem('cue-posted-log'); postedLog = p ? JSON.parse(p) : {}; }catch(e){ postedLog = {}; }
+  try{ const a = localStorage.getItem('cue-alerted-log'); alertedLog = a ? JSON.parse(a) : {}; }catch(e){ alertedLog = {}; }
+  try{ const s = localStorage.getItem('cue-settings'); if(s) settings = {...settings, ...JSON.parse(s)}; }catch(e){}
+  try{ const f = localStorage.getItem('cue-followers'); if(f) followers = {...followers, ...JSON.parse(f)}; }catch(e){}
+  try{ const g = localStorage.getItem('cue-goals'); if(g) goals = {...goals, ...JSON.parse(g)}; }catch(e){}
 }
-async function saveFollowers(){
-  try{ await window.storage.set('cue-followers', JSON.stringify(followers)); }catch(e){}
-}
-async function saveGoals(){
-  try{ await window.storage.set('cue-goals', JSON.stringify(goals)); }catch(e){}
-}
-async function savePosted(){
-  try{ await window.storage.set('cue-posted-log', JSON.stringify(postedLog)); }catch(e){}
-}
-async function saveAlerted(){
-  try{ await window.storage.set('cue-alerted-log', JSON.stringify(alertedLog)); }catch(e){}
-}
-async function saveSettings(){
-  try{ await window.storage.set('cue-settings', JSON.stringify(settings)); }catch(e){}
+async function saveFollowers(){ try{ localStorage.setItem('cue-followers', JSON.stringify(followers)); }catch(e){} }
+async function saveGoals(){ try{ localStorage.setItem('cue-goals', JSON.stringify(goals)); }catch(e){} }
+async function savePosted(){ try{ localStorage.setItem('cue-posted-log', JSON.stringify(postedLog)); }catch(e){} }
+async function saveAlerted(){ try{ localStorage.setItem('cue-alerted-log', JSON.stringify(alertedLog)); }catch(e){} }
+async function saveSettings(){ try{ localStorage.setItem('cue-settings', JSON.stringify(settings)); }catch(e){} }
+
+function pruneOldLogs(){
+  const cutoff = new Date();
+  cutoff.setDate(cutoff.getDate()-21); // keep last 3 weeks, drop anything older
+  const cutoffStr = todayStr(cutoff);
+  let changed = false;
+  [postedLog, alertedLog].forEach(log=>{
+    Object.keys(log).forEach(key=>{
+      const datePart = key.split(':').pop(); // "yt-jesus:2026-08-16" -> "2026-08-16"
+      if(datePart < cutoffStr){ delete log[key]; changed = true; }
+    });
+  });
+  if(changed){ savePosted(); saveAlerted(); }
 }
 
 // ---------------- Helpers ----------------
@@ -417,28 +407,33 @@ function statusFor(ch, slotTime, slotDays, dateKeySuffix){
 
   if(!active) return {state:'off', key};
   if(done) return {state:'done', key};
-  if(!slotTime) return {state:'due', key}; // all-day items (daily content, carousels)
+  if(!slotTime) return {state:'due', key};
 
   const nowM = minutesNow(), slotM = minutesOf(slotTime);
   if(nowM < slotM) return {state:'upcoming', key};
   return {state:'due', key};
 }
 
-function dayChips(days, doneToday){
+function dayChips(days, doneToday, accent){
   const now = new Date(); const todayIdx = now.getDay();
   return DAY_ORDER.map((jsDay,i)=>{
     const isActive = days.includes(jsDay);
     const isToday = jsDay===todayIdx;
-    let cls='day-chip';
-    if(isActive) cls += (isToday && doneToday) ? ' done-active':' active';
-    return `<div class="${cls}">${DAY_LABELS[i]}</div>`;
+    let cls='day-pill';
+    let style='';
+    if(isActive){
+      cls += (isToday && doneToday) ? ' done-active':' active';
+      if(!(isToday && doneToday)) style = `style="--accent-color:${accent}"`;
+    }
+    return `<div class="${cls}" ${style}>${DAY_LABELS[i]}</div>`;
   }).join('');
 }
 
 function renderChannelRow(ch){
+  const accent = PLAT_ACCENT[ch.platform] || 'var(--signal)';
   const st = statusFor(ch, ch.time, ch.days);
   const badgeMap = {off:'Off today', upcoming:'Upcoming', due:'Post now', done:'Posted ✓'};
-  const clsMap = {off:'status-off', upcoming:'status-upcoming', due:'status-due', done:'status-done'};
+  const clsMap = {off:'badge-off', upcoming:'badge-upcoming', due:'badge-due', done:'badge-done'};
 
   let extraHtml = '';
   if(ch.extraNote){
@@ -447,8 +442,8 @@ function renderChannelRow(ch){
   if(ch.extra){
     const est = statusFor(ch, null, ch.extra.days, ':extra');
     const active = ch.extra.days.includes(new Date().getDay());
-    extraHtml += `<div class="row-bottom" style="margin-top:10px;">
-      <div style="font-size:12px; color:var(--muted);">${ch.extra.label}</div>
+    extraHtml += `<div class="extra-row">
+      <div style="font-size:11.5px; color:var(--muted);">${ch.extra.label}</div>
       <label class="check">
         <input type="checkbox" data-key="${est.key}" class="posted-box" ${est.state==='done'?'checked':''} ${!active?'disabled':''}>
         mark posted
@@ -456,20 +451,17 @@ function renderChannelRow(ch){
     </div>`;
   }
 
-  const fCount = Number(followers[ch.id])||0;
-  const gTarget = Number(goals[ch.id])||100000;
-
   return `
-  <div class="row">
-    <div class="row-top">
+  <div class="card glass" style="--accent-color:${accent}">
+    <div class="card-top">
       <div>
         <div class="ch-name">${ch.name}</div>
         <div class="ch-meta">${ch.meta}</div>
       </div>
-      <div class="status-badge ${clsMap[st.state]}">${badgeMap[st.state]}</div>
+      <div class="badge ${clsMap[st.state]}">${badgeMap[st.state]}</div>
     </div>
-    <div class="row-bottom">
-      <div class="days">${dayChips(ch.days, st.state==='done')}</div>
+    <div class="card-bottom">
+      <div class="days">${dayChips(ch.days, st.state==='done', accent)}</div>
       <div class="time-tag">${ch.time? fmtTime12(ch.time):'anytime'}</div>
       <label class="check">
         <input type="checkbox" data-key="${st.key}" class="posted-box" ${st.state==='done'?'checked':''} ${st.state==='off'?'disabled':''}>
@@ -480,58 +472,18 @@ function renderChannelRow(ch){
   </div>`;
 }
 
-function getWeekDates(){
-  // Monday-start week containing today
-  const now = new Date();
-  const jsDay = now.getDay(); // 0=Sun..6=Sat
-  const sinceMonday = (jsDay+6)%7;
-  const monday = new Date(now); monday.setDate(now.getDate()-sinceMonday);
-  const dates = [];
-  for(let i=0;i<7;i++){ const d=new Date(monday); d.setDate(monday.getDate()+i); dates.push(d); }
-  return dates;
-}
-
-function computeWeekStats(){
-  const weekDates = getWeekDates();
-  let total = 0, completed = 0;
-
-  CHANNELS.forEach(ch=>{
-    const slots = [{days:ch.days, suffix:''}];
-    if(ch.extra) slots.push({days:ch.extra.days, suffix:':extra'});
-
-    slots.forEach(slot=>{
-      weekDates.forEach(d=>{
-        if(slot.days.includes(d.getDay())){
-          total++;
-          const key = ch.id+slot.suffix+':'+todayStr(d);
-          if(postedLog[key]) completed++;
-        }
-      });
-    });
-  });
-
-  return {total, completed, pct: total? Math.round((completed/total)*100):0};
-}
-
-function renderWeekProgress(){
-  const {total, completed, pct} = computeWeekStats();
-  document.getElementById('wpCount').textContent = `${completed} / ${total} posted`;
-  document.getElementById('wpFill').style.width = pct+'%';
-  document.getElementById('wpPct').textContent = pct+'%';
-}
-
 function renderAll(){
   const yt = CHANNELS.filter(c=>c.platform==='YouTube');
   const ig = CHANNELS.filter(c=>c.platform==='Instagram');
   const fb = CHANNELS.filter(c=>c.platform==='Facebook');
   document.getElementById('youtube-section').innerHTML = `
-    <div class="platform-head"><span class="ident ident-yt"></span><h2>YouTube</h2><span>${yt.length} channels</span></div>
+    <div class="platform-head"><span class="plat-ident yt"></span><h2>YouTube</h2><span class="count">${yt.length} channels</span></div>
     ${yt.map(renderChannelRow).join('')}`;
   document.getElementById('instagram-section').innerHTML = `
-    <div class="platform-head"><span class="ident ident-ig"></span><h2>Instagram</h2><span>${ig.length} channels</span></div>
+    <div class="platform-head"><span class="plat-ident ig"></span><h2>Instagram</h2><span class="count">${ig.length} channels</span></div>
     ${ig.map(renderChannelRow).join('')}`;
   document.getElementById('facebook-section').innerHTML = `
-    <div class="platform-head"><span class="ident ident-fb"></span><h2>Facebook</h2><span>${fb.length} channels</span></div>
+    <div class="platform-head"><span class="plat-ident fb"></span><h2>Facebook</h2><span class="count">${fb.length} channels</span></div>
     ${fb.map(renderChannelRow).join('')}`;
 
   document.querySelectorAll('.posted-box').forEach(box=>{
@@ -549,7 +501,7 @@ function renderAll(){
 // ---------------- Clock + next-up ticker ----------------
 function updateClock(){
   const now = new Date();
-  document.getElementById('clock').textContent = now.toLocaleTimeString('en-IN',{hour12:false});
+  document.getElementById('clock').textContent = now.toLocaleTimeString('en-IN',{hour12:true}).toUpperCase();
   document.getElementById('dateStr').textContent = now.toLocaleDateString('en-IN',{weekday:'long', day:'numeric', month:'long'});
   renderNextUp(now);
 }
@@ -562,20 +514,20 @@ function renderNextUp(now){
   CHANNELS.forEach(ch=>{
     [{days:ch.days, time:ch.time, suffix:''}, ...(ch.extra? [{days:ch.extra.days, time:ch.extra.time, suffix:':extra', label:ch.extra.label}] : [])]
       .forEach(slot=>{
-        if(!slot.time) return; // skip all-day / no-time slots in the ticker
+        if(!slot.time) return;
         for(let offset=0; offset<7; offset++){
           const dayIdx = (todayIdx+offset)%7;
           if(!slot.days.includes(dayIdx)) continue;
           if(offset===0){
             const key = ch.id+slot.suffix+':'+todayStr();
             if(postedLog[key]) continue;
-            if(minutesOf(slot.time) < nowM) continue; // already passed today
+            if(minutesOf(slot.time) < nowM) continue;
           }
           const totalMinutesFromNow = offset*1440 + (minutesOf(slot.time)-nowM);
           if(best===null || totalMinutesFromNow < best.totalMinutesFromNow){
             best = {ch, slot, offset, totalMinutesFromNow, dayIdx};
           }
-          break; // only nearest occurrence of this slot
+          break;
         }
       });
   });
@@ -587,12 +539,44 @@ function renderNextUp(now){
   el.innerHTML = `NEXT · <b>${best.ch.name}</b>${label} → ${best.ch.platform} · ${when} ${fmtTime12(best.slot.time)}`;
 }
 
+// ---------------- Weekly progress ----------------
+function getWeekDates(){
+  const now = new Date();
+  const jsDay = now.getDay();
+  const sinceMonday = (jsDay+6)%7;
+  const monday = new Date(now); monday.setDate(now.getDate()-sinceMonday);
+  const dates = [];
+  for(let i=0;i<7;i++){ const d=new Date(monday); d.setDate(monday.getDate()+i); dates.push(d); }
+  return dates;
+}
+function computeWeekStats(){
+  const weekDates = getWeekDates();
+  let total = 0, completed = 0;
+  CHANNELS.forEach(ch=>{
+    const slots = [{days:ch.days, suffix:''}];
+    if(ch.extra) slots.push({days:ch.extra.days, suffix:':extra'});
+    slots.forEach(slot=>{
+      weekDates.forEach(d=>{
+        if(slot.days.includes(d.getDay())){
+          total++;
+          const key = ch.id+slot.suffix+':'+todayStr(d);
+          if(postedLog[key]) completed++;
+        }
+      });
+    });
+  });
+  return {total, completed, pct: total? Math.round((completed/total)*100):0};
+}
+function renderWeekProgress(){
+  const {total, completed, pct} = computeWeekStats();
+  document.getElementById('wpCount').textContent = `${completed} / ${total} posted`;
+  document.getElementById('wpFill').style.width = pct+'%';
+  document.getElementById('wpPct').textContent = pct+'%';
+}
+
 // ---------------- Alarm engine ----------------
 let audioCtx = null;
-function getCtx(){
-  if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)();
-  return audioCtx;
-}
+function getCtx(){ if(!audioCtx) audioCtx = new (window.AudioContext||window.webkitAudioContext)(); return audioCtx; }
 function beep(freq, start, dur, type='sine', gainVal=0.18){
   const ctx = getCtx();
   const osc = ctx.createOscillator();
@@ -615,19 +599,22 @@ function toast(msg){
   t.textContent = msg; t.classList.add('show');
   setTimeout(()=>t.classList.remove('show'), 4500);
 }
-
-let topBannerTimer = null;
-function showTopBanner(msg){
+let ringInterval = null;
+function startRinging(msg){
   const b = document.getElementById('topBanner');
   document.getElementById('topBannerText').textContent = msg;
-  b.classList.add('show');
-  clearTimeout(topBannerTimer);
-  topBannerTimer = setTimeout(()=> b.classList.remove('show'), 8000);
+  b.classList.add('show', 'ringing');
+  clearInterval(ringInterval);
+  playSound(settings.sound);
+  ringInterval = setInterval(()=> playSound(settings.sound), 1800);
 }
-document.getElementById('topBannerClose').addEventListener('click', ()=>{
-  document.getElementById('topBanner').classList.remove('show');
-  clearTimeout(topBannerTimer);
-});
+function stopRinging(){
+  clearInterval(ringInterval);
+  ringInterval = null;
+  const b = document.getElementById('topBanner');
+  b.classList.remove('show', 'ringing');
+}
+document.getElementById('topBannerClose').addEventListener('click', stopRinging);
 
 function buildTodayList(){
   const todayIdx = new Date().getDay();
@@ -642,10 +629,9 @@ function buildTodayList(){
   });
   return items;
 }
-
 function notifyScreen(title, body){
   if('Notification' in window && Notification.permission==='granted'){
-    try{ new Notification(title, {body}); }catch(e){ /* ignore */ }
+    try{ new Notification(title, {body}); }catch(e){}
   }
 }
 
@@ -657,9 +643,8 @@ function checkAlarms(){
   if(settings.morningOn && nowHM===settings.morningTime && settings.morningAlertedDate!==todayStr()){
     const items = buildTodayList();
     const body = items.length ? items.join('\n') : 'Nothing scheduled today — off day.';
-    playSound(settings.sound);
     toast(items.length ? `📋 Today's posts: ${items.join(' · ')}` : '📋 Nothing scheduled today.');
-    showTopBanner(items.length ? `📋 Today's posting plan: ${items.join(' · ')}` : '📋 Nothing scheduled today — off day.');
+    startRinging(items.length ? `📋 Today's posting plan: ${items.join(' · ')}` : '📋 Nothing scheduled today — off day.');
     notifyScreen('Today\'s posting plan', body);
     settings.morningAlertedDate = todayStr();
     saveSettings();
@@ -670,9 +655,8 @@ function checkAlarms(){
       if(ch.time && ch.days.includes(todayIdx) && ch.time===nowHM){
         const pKey = ch.id+':'+todayStr(), aKey = pKey;
         if(!postedLog[pKey] && !alertedLog[aKey]){
-          playSound(settings.sound);
           toast(`⏰ Time to post — ${ch.name} (${ch.platform})`);
-          showTopBanner(`⏰ Time to post — ${ch.name} (${ch.platform})`);
+          startRinging(`⏰ Time to post — ${ch.name} (${ch.platform})`);
           notifyScreen('Time to post', `${ch.name} (${ch.platform})`);
           alertedLog[aKey]=true; saveAlerted();
         }
@@ -681,9 +665,8 @@ function checkAlarms(){
   }
 
   if(settings.nightOn && nowHM===settings.nightTime && settings.nightAlertedDate!==todayStr()){
-    playSound(settings.sound);
     toast('🌙 Studio time — make or plan something today.');
-    showTopBanner('🌙 Studio time — make or plan something today.');
+    startRinging('🌙 Studio time — make or plan something today.');
     notifyScreen('Studio time', 'Make or plan something today.');
     settings.nightAlertedDate = todayStr();
     saveSettings();
@@ -691,13 +674,38 @@ function checkAlarms(){
 }
 
 // ---------------- Settings UI wiring ----------------
+function populateHourMin(){
+  ['morning','night'].forEach(prefix=>{
+    const hourSel = document.getElementById(prefix+'Hour');
+    const minSel = document.getElementById(prefix+'Min');
+    hourSel.innerHTML = Array.from({length:12},(_,i)=>i+1).map(h=>`<option value="${h}">${h}</option>`).join('');
+    minSel.innerHTML = Array.from({length:60},(_,i)=>String(i).padStart(2,'0')).map(m=>`<option value="${m}">${m}</option>`).join('');
+  });
+}
+function set12FromHHMM(prefix, hhmm){
+  const [H,M] = hhmm.split(':').map(Number);
+  const ampm = H>=12 ? 'PM':'AM';
+  const h12 = ((H+11)%12)+1;
+  document.getElementById(prefix+'Hour').value = h12;
+  document.getElementById(prefix+'Min').value = String(M).padStart(2,'0');
+  document.getElementById(prefix+'Ampm').value = ampm;
+}
+function get24FromInputs(prefix){
+  const h12 = Number(document.getElementById(prefix+'Hour').value);
+  const m = Number(document.getElementById(prefix+'Min').value);
+  const ampm = document.getElementById(prefix+'Ampm').value;
+  let H = h12%12;
+  if(ampm==='PM') H += 12;
+  return String(H).padStart(2,'0')+':'+String(m).padStart(2,'0');
+}
+
 function syncSettingsUI(){
   document.getElementById('toggleAlerts').classList.toggle('on', settings.alertsOn);
   document.getElementById('toggleNight').classList.toggle('on', settings.nightOn);
   document.getElementById('toggleMorning').classList.toggle('on', settings.morningOn);
   document.getElementById('soundSelect').value = settings.sound;
-  document.getElementById('nightTime').value = settings.nightTime;
-  document.getElementById('morningTime').value = settings.morningTime;
+  set12FromHHMM('night', settings.nightTime);
+  set12FromHHMM('morning', settings.morningTime);
   syncNotifStatus();
 }
 function syncNotifStatus(){
@@ -724,9 +732,24 @@ function wireSettings(){
   document.getElementById('toggleMorning').addEventListener('click', async ()=>{
     settings.morningOn = !settings.morningOn; syncSettingsUI(); await saveSettings();
   });
-  document.getElementById('morningTime').addEventListener('change', async (e)=>{
-    settings.morningTime = e.target.value; await saveSettings();
+  ['morningHour','morningMin','morningAmpm'].forEach(id=>{
+    document.getElementById(id).addEventListener('change', async ()=>{
+      settings.morningTime = get24FromInputs('morning'); await saveSettings();
+    });
   });
+  document.getElementById('soundSelect').addEventListener('change', async (e)=>{
+    settings.sound = e.target.value; await saveSettings();
+  });
+  document.getElementById('nightHour').addEventListener('change', async ()=>{
+    settings.nightTime = get24FromInputs('night'); await saveSettings();
+  });
+  document.getElementById('nightMin').addEventListener('change', async ()=>{
+    settings.nightTime = get24FromInputs('night'); await saveSettings();
+  });
+  document.getElementById('nightAmpm').addEventListener('change', async ()=>{
+    settings.nightTime = get24FromInputs('night'); await saveSettings();
+  });
+  document.getElementById('testSound').addEventListener('click', ()=> playSound(settings.sound));
   document.getElementById('enableNotif').addEventListener('click', async ()=>{
     if('Notification' in window){
       await Notification.requestPermission();
@@ -734,18 +757,13 @@ function wireSettings(){
       if(Notification.permission==='granted') notifyScreen('Notifications on', 'You\'ll get your morning posting plan here.');
     }
   });
-  document.getElementById('soundSelect').addEventListener('change', async (e)=>{
-    settings.sound = e.target.value; await saveSettings();
-  });
-  document.getElementById('nightTime').addEventListener('change', async (e)=>{
-    settings.nightTime = e.target.value; await saveSettings();
-  });
-  document.getElementById('testSound').addEventListener('click', ()=> playSound(settings.sound));
 }
 
 // ---------------- Boot ----------------
 (async function init(){
   await loadState();
+  pruneOldLogs();
+  populateHourMin();
   syncSettingsUI();
   wireSettings();
   renderAll();
@@ -753,6 +771,21 @@ function wireSettings(){
   setInterval(updateClock, 1000);
   setInterval(checkAlarms, 15000);
   checkAlarms();
+
+  try{
+    if(window.self !== window.top){
+      document.getElementById('previewNotice').style.display = 'block';
+    }
+  }catch(e){
+    // cross-origin access to window.top throws in some sandboxes — that itself confirms we're framed
+    document.getElementById('previewNotice').style.display = 'block';
+  }
+  const dismissBtn = document.getElementById('dismissPreviewNotice');
+  if(dismissBtn){
+    dismissBtn.addEventListener('click', ()=>{
+      document.getElementById('previewNotice').style.display = 'none';
+    });
+  }
 })();
 </script>
 </body>
