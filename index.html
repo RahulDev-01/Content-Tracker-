@@ -120,14 +120,20 @@ body{
   border-color:rgba(69,208,181,.35);
   background:rgba(69,208,181,.05);
 }
+.card.day-off{
+  border-color:rgba(255,255,255,.16);
+  background:rgba(255,255,255,.06);
+}
 @media (hover:hover){
   .card:hover{transform:translateY(-1px);}
   .card:not(:has(.posted-box:checked)):hover{border-color:rgba(255,90,90,.55);}
   .card:has(.posted-box:checked):hover{border-color:rgba(69,208,181,.55);}
+  .card.day-off:not(:has(.posted-box:checked)):hover{border-color:rgba(255,255,255,.3);}
 }
 .card-top{display:flex; justify-content:space-between; align-items:flex-start; gap:12px; flex-wrap:wrap;}
 .ch-name{font-family:'Oswald',sans-serif; font-weight:600; font-size:16px; letter-spacing:.02em; transition:color .15s ease; color:#FF5A5A;}
 .card:has(.posted-box:checked) .ch-name{color:var(--go); text-shadow:0 0 10px rgba(69,208,181,.35);}
+.card.day-off .ch-name{color:var(--text); text-shadow:none;}
 .ch-meta{font-size:12px; color:var(--muted); margin-top:2px;}
 
 .badge{
@@ -150,6 +156,7 @@ body{
 .day-pill.active{color:var(--bg); background:var(--signal); border-color:var(--signal);}
 .day-pill.done-active{color:var(--bg); background:var(--go); border-color:var(--go);}
 .day-pill.carousel{color:#C79BFF; border-color:#C79BFF; background:rgba(199,155,255,.1);}
+.day-pill.tag-outline{color:var(--tag-color,#FF5A5A); border-color:var(--tag-color,#FF5A5A); background:rgba(255,90,90,.1);}
 
 .time-tag{font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--text); white-space:nowrap;}
 
@@ -168,6 +175,11 @@ body{
 }
 .extra-label{display:flex; align-items:center; gap:7px; font-size:11.5px; color:#C79BFF; font-weight:500;}
 .extra-dot{width:7px; height:7px; border-radius:50%; background:#C79BFF; box-shadow:0 0 7px #C79BFF; flex:0 0 auto;}
+.tag-row{
+  display:flex; align-items:center; gap:7px; margin-top:10px; padding-top:10px;
+  border-top:1px dashed rgba(255,90,90,.25); font-size:11.5px; color:#FF5A5A; font-weight:500;
+}
+.tag-dot{width:7px; height:7px; border-radius:50%; background:#FF5A5A; box-shadow:0 0 7px #FF5A5A; flex:0 0 auto;}
 
 /* ---- Settings ---- */
 .settings{padding:20px; margin-top:0;}
@@ -349,15 +361,18 @@ select,input[type=time],input[type=number]{
 const CHANNELS = [
   {id:'yt-jesus', platform:'YouTube', name:'Jesus', meta:'4.2k subscribers · Daily 2 Shorts', days:[0,1,2,3,4,5,6], time:'16:30',
     extraNote:'Also cross-posted to Facebook · 3.4k followers'},
-  {id:'yt-rahul', platform:'YouTube', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30'},
+  {id:'yt-rahul', platform:'YouTube', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30',
+    tag:{days:[6], label:'Long video (Sat)'}},
   {id:'yt-raccoon', platform:'YouTube', name:'AI With Raccoon', meta:'Weekly · 3 Videos', days:[1,6], time:'18:30'},
   {id:'ig-nxt', platform:'Instagram', name:'Nxtfigurelab', meta:'Daily · 1 Reel', days:[0,1,2,3,4,5,6], time:'22:30'},
-  {id:'ig-rahul', platform:'Instagram', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30'},
+  {id:'ig-rahul', platform:'Instagram', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30',
+    tag:{days:[6], label:'Long video (Sat)'}},
   {id:'ig-raccoon', platform:'Instagram', name:'AI With Raccoon', meta:'Weekly · 3 Reels', days:[1,6], time:'18:30',
     extra:{days:[3,5], label:'Carousel post (Wed / Fri)'}},
   {id:'fb-jesus', platform:'Facebook', name:'Jesus', meta:'3.5k followers · Daily 2 Shorts', days:[0,1,2,3,4,5,6], time:'16:30'},
   {id:'fb-nxt', platform:'Facebook', name:'Nxtfigurelab', meta:'Daily · 1 Reel', days:[0,1,2,3,4,5,6], time:'22:30'},
-  {id:'fb-rahul', platform:'Facebook', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30'},
+  {id:'fb-rahul', platform:'Facebook', name:'Rahul ki Kahani', meta:'Weekly · 3 Videos', days:[1,3,6], time:'19:30',
+    tag:{days:[6], label:'Long video (Sat)'}},
   {id:'fb-raccoon', platform:'Facebook', name:'AI With Raccoon', meta:'Weekly · 3 Reels', days:[1,6], time:'18:30',
     extra:{days:[3,5], label:'Carousel post (Wed / Fri)'}},
 ];
@@ -444,19 +459,27 @@ function combinedStatus(ch, mainSt){
   return mainSt;
 }
 
-function dayChips(days, doneToday, accent, extraDays){
-  const now = new Date(); const todayIdx = now.getDay();
+function dayChips(ch, days, accent, extraDays, tagDays, tagColor){
+  const weekDates = getWeekDates(); // Monday..Sunday, same order as DAY_ORDER/DAY_LABELS
   return DAY_ORDER.map((jsDay,i)=>{
     const isActive = days.includes(jsDay);
     const isCarousel = !isActive && extraDays && extraDays.includes(jsDay);
-    const isToday = jsDay===todayIdx;
+    const isTaggedActive = isActive && tagDays && tagDays.includes(jsDay);
+    const isTaggedInactive = !isActive && !isCarousel && tagDays && tagDays.includes(jsDay);
+    const dateStr = todayStr(weekDates[i]);
+    const mainKey = ch.id+':'+dateStr;
+    const extraKey = ch.id+':extra:'+dateStr;
+    const posted = (isActive && postedLog[mainKey]) || (isCarousel && postedLog[extraKey]);
     let cls='day-pill';
     let style='';
     if(isActive){
-      cls += (isToday && doneToday) ? ' done-active':' active';
-      if(!(isToday && doneToday)) style = `style="--accent-color:${accent}"`;
+      cls += posted ? ' done-active':' active';
+      if(!posted) style = `style="--accent-color:${isTaggedActive ? tagColor : accent}"`;
     }else if(isCarousel){
-      cls += (isToday && doneToday) ? ' done-active' : ' carousel';
+      cls += posted ? ' done-active' : ' carousel';
+    }else if(isTaggedInactive){
+      cls += ' tag-outline';
+      style = `style="--tag-color:${tagColor}"`;
     }
     return `<div class="${cls}" ${style}>${DAY_LABELS[i]}</div>`;
   }).join('');
@@ -484,9 +507,12 @@ function renderChannelRow(ch){
       </label>
     </div>`;
   }
+  if(ch.tag){
+    extraHtml += `<div class="tag-row"><span class="tag-dot"></span>${ch.tag.label}</div>`;
+  }
 
   return `
-  <div class="card glass" style="--accent-color:${accent}">
+  <div class="card glass ${st.state==='off' ? 'day-off' : ''}" style="--accent-color:${accent}">
     <div class="card-top">
       <div>
         <div class="ch-name">${ch.name}</div>
@@ -495,7 +521,7 @@ function renderChannelRow(ch){
       <div class="badge ${clsMap[st.state]}">${badgeMap[st.state]}</div>
     </div>
     <div class="card-bottom">
-      <div class="days">${dayChips(ch.days, st.state==='done', accent, ch.extra? ch.extra.days : null)}</div>
+      <div class="days">${dayChips(ch, ch.days, accent, ch.extra? ch.extra.days : null, ch.tag? ch.tag.days : null, '#FF5A5A')}</div>
       <div class="time-tag">${ch.time? fmtTime12(ch.time):'anytime'}</div>
       <label class="check">
         <input type="checkbox" data-key="${mainSt.key}" class="posted-box" ${mainSt.state==='done'?'checked':''} ${mainSt.state==='off'?'disabled':''}>
