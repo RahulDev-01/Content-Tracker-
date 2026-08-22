@@ -219,6 +219,50 @@ select,input[type=time],input[type=number]{
   border-top:1px solid var(--line); padding-top:14px;
 }
 
+/* ---- Ideas & Planning ---- */
+.ideas-section{margin-top:26px;}
+.ideas-head{display:flex; align-items:center; justify-content:space-between; margin-bottom:14px; gap:10px; flex-wrap:wrap;}
+.ideas-head h2{
+  font-family:'Oswald',sans-serif; font-weight:700; font-size:clamp(17px,4vw,20px); letter-spacing:.04em;
+  text-transform:uppercase; margin:0; color:var(--text);
+}
+.idea-card{padding:16px 18px; margin-bottom:12px;}
+.idea-title-row{display:flex; align-items:center; gap:10px; margin-bottom:12px;}
+.idea-title-input{
+  flex:1; background:transparent; border:none; border-bottom:1px solid var(--line);
+  color:var(--text); font-family:'Oswald',sans-serif; font-weight:600; font-size:16px; letter-spacing:.02em;
+  padding:4px 2px; min-width:0;
+}
+.idea-title-input:focus{border-bottom-color:var(--signal);}
+.idea-title-input::placeholder{color:var(--muted);}
+.idea-remove{
+  background:transparent; border:1px solid var(--line); color:var(--muted); border-radius:6px;
+  width:26px; height:26px; font-size:14px; cursor:pointer; flex:0 0 auto;
+}
+.idea-remove:hover{border-color:#FF5A5A; color:#FF5A5A;}
+.item-row{display:flex; align-items:center; gap:8px; margin-bottom:8px;}
+.item-input{
+  flex:1; min-width:0; background:var(--bg); color:var(--text); border:1px solid var(--line); border-radius:6px;
+  padding:9px 12px; font-family:'Inter',sans-serif; font-size:13px;
+}
+.item-input:focus{border-color:var(--signal);}
+.item-input::placeholder{color:var(--muted);}
+.item-remove{
+  background:transparent; border:none; color:var(--muted); cursor:pointer; font-size:16px; flex:0 0 auto; width:24px; height:24px;
+}
+.item-remove:hover{color:#FF5A5A;}
+.add-field-btn{
+  background:transparent; border:1px dashed var(--line); color:var(--muted); border-radius:6px;
+  padding:6px 12px; font-size:11.5px; cursor:pointer; margin-top:4px;
+}
+.add-field-btn:hover{border-color:var(--signal); color:var(--signal);}
+.add-topic-btn{
+  width:100%; background:var(--panel2); border:1px dashed var(--line); color:var(--muted);
+  border-radius:10px; padding:14px; font-family:'Oswald',sans-serif; font-weight:600; font-size:13px;
+  text-transform:uppercase; letter-spacing:.04em; cursor:pointer; margin-top:4px;
+}
+.add-topic-btn:hover{border-color:var(--signal); color:var(--signal);}
+
 /* ---- Toast ---- */
 .toast{
   position:fixed; bottom:20px; left:50%; transform:translateX(-50%) translateY(20px);
@@ -351,6 +395,14 @@ select,input[type=time],input[type=number]{
     </div>
   </div>
 
+  <div class="ideas-section">
+    <div class="ideas-head">
+      <h2>Ideas &amp; Planning</h2>
+    </div>
+    <div id="ideasList"></div>
+    <button class="add-topic-btn" id="addTopicBtn">+ Add Topic</button>
+  </div>
+
 </div>
 
 <div class="toast" id="toast"></div>
@@ -387,6 +439,9 @@ let alertedLog = {};    // same shape, prevents re-firing same slot same day
 let settings = {alertsOn:true, sound:'chime', nightOn:true, nightTime:'22:00', nightAlertedDate:null, morningOn:true, morningTime:'08:00', morningAlertedDate:null};
 let followers = {'yt-jesus':4200,'yt-rahul':0,'yt-raccoon':0,'ig-nxt':0,'ig-rahul':0,'ig-raccoon':0,'fb-jesus':3500,'fb-nxt':0,'fb-rahul':0,'fb-raccoon':0};
 let goals = {'yt-jesus':100000,'yt-rahul':100000,'yt-raccoon':100000,'ig-nxt':100000,'ig-rahul':100000,'ig-raccoon':100000,'fb-jesus':100000,'fb-nxt':100000,'fb-rahul':100000,'fb-raccoon':100000};
+let ideas = [
+  {id:'idea-1', title:'Podcast Planning', items:['']}
+];
 
 // ---------------- Storage (localStorage — works on any hosted site, incl. GitHub Pages) ----------------
 async function loadState(){
@@ -395,9 +450,22 @@ async function loadState(){
   try{ const s = localStorage.getItem('cue-settings'); if(s) settings = {...settings, ...JSON.parse(s)}; }catch(e){}
   try{ const f = localStorage.getItem('cue-followers'); if(f) followers = {...followers, ...JSON.parse(f)}; }catch(e){}
   try{ const g = localStorage.getItem('cue-goals'); if(g) goals = {...goals, ...JSON.parse(g)}; }catch(e){}
+  try{
+    const i = localStorage.getItem('cue-ideas');
+    if(i){
+      const parsed = JSON.parse(i);
+      ideas = parsed.map(idea=>{
+        if(Array.isArray(idea.items)) return idea;
+        // migrate old {label,value} field shape to plain text lines
+        const items = (idea.fields||[]).map(f => f.label || f.value ? `${f.label}: ${f.value}`.replace(/^: /,'') : '');
+        return {id: idea.id, title: idea.title, items: items.length ? items : ['']};
+      });
+    }
+  }catch(e){}
 }
 async function saveFollowers(){ try{ localStorage.setItem('cue-followers', JSON.stringify(followers)); }catch(e){} }
 async function saveGoals(){ try{ localStorage.setItem('cue-goals', JSON.stringify(goals)); }catch(e){} }
+async function saveIdeas(){ try{ localStorage.setItem('cue-ideas', JSON.stringify(ideas)); }catch(e){} }
 async function savePosted(){ try{ localStorage.setItem('cue-posted-log', JSON.stringify(postedLog)); }catch(e){} }
 async function saveAlerted(){ try{ localStorage.setItem('cue-alerted-log', JSON.stringify(alertedLog)); }catch(e){} }
 async function saveSettings(){ try{ localStorage.setItem('cue-settings', JSON.stringify(settings)); }catch(e){} }
@@ -530,6 +598,68 @@ function renderChannelRow(ch){
     </div>
     ${extraHtml}
   </div>`;
+}
+
+function renderIdeas(){
+  const list = document.getElementById('ideasList');
+  if(!list) return;
+  list.innerHTML = ideas.map(idea => `
+    <div class="idea-card glass" data-idea="${idea.id}">
+      <div class="idea-title-row">
+        <input type="text" class="idea-title-input" data-idea="${idea.id}" placeholder="Topic name (e.g. Podcast Planning)" value="${idea.title.replace(/"/g,'&quot;')}">
+        <button class="idea-remove" data-idea="${idea.id}" title="Remove topic">✕</button>
+      </div>
+      ${idea.items.map((text,i) => `
+        <div class="item-row" data-idea="${idea.id}" data-idx="${i}">
+          <input type="text" class="item-input" data-idea="${idea.id}" data-idx="${i}" placeholder="Type your idea…" value="${text.replace(/"/g,'&quot;')}">
+          <button class="item-remove" data-idea="${idea.id}" data-idx="${i}" title="Remove">✕</button>
+        </div>`).join('')}
+      <button class="add-field-btn" data-idea="${idea.id}">+ Add idea</button>
+    </div>`).join('');
+
+  list.querySelectorAll('.idea-title-input').forEach(inp=>{
+    inp.addEventListener('input', (e)=>{
+      const idea = ideas.find(i=>i.id===e.target.dataset.idea);
+      if(idea){ idea.title = e.target.value; saveIdeas(); }
+    });
+  });
+  list.querySelectorAll('.item-input').forEach(inp=>{
+    inp.addEventListener('input', (e)=>{
+      const idea = ideas.find(i=>i.id===e.target.dataset.idea);
+      if(idea){
+        idea.items[Number(e.target.dataset.idx)] = e.target.value;
+        saveIdeas();
+      }
+    });
+  });
+  list.querySelectorAll('.item-remove').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const idea = ideas.find(i=>i.id===e.target.dataset.idea);
+      if(idea){
+        idea.items.splice(Number(e.target.dataset.idx),1);
+        if(idea.items.length===0) idea.items.push('');
+        saveIdeas();
+        renderIdeas();
+      }
+    });
+  });
+  list.querySelectorAll('.add-field-btn').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      const idea = ideas.find(i=>i.id===e.target.dataset.idea);
+      if(idea){
+        idea.items.push('');
+        saveIdeas();
+        renderIdeas();
+      }
+    });
+  });
+  list.querySelectorAll('.idea-remove').forEach(btn=>{
+    btn.addEventListener('click', (e)=>{
+      ideas = ideas.filter(i=>i.id!==e.target.dataset.idea);
+      saveIdeas();
+      renderIdeas();
+    });
+  });
 }
 
 function renderAll(){
@@ -827,6 +957,12 @@ function wireSettings(){
   syncSettingsUI();
   wireSettings();
   renderAll();
+  renderIdeas();
+  document.getElementById('addTopicBtn').addEventListener('click', ()=>{
+    ideas.push({id:'idea-'+Date.now(), title:'', items:['']});
+    saveIdeas();
+    renderIdeas();
+  });
   updateClock();
   setInterval(updateClock, 1000);
   setInterval(checkAlarms, 15000);
